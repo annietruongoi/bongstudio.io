@@ -1,5 +1,5 @@
 ;(()=>{
-const AFF_BASE = {"shopee": "https://go.isclix.com/deep_link/4987479776286135214/4751584435713464237?sub4=oneatweb", "tiktok": "https://go.isclix.com/deep_link/4987479776286135214/6648523843406889655?sub4=oneatweb", "lazada": "https://go.isclix.com/deep_link/4987479776286135214/5127144557053758578?sub4=oneatweb"};
+const AFF_BASE = {"shopee": "https://go.isclix.com/deep_link/6837508078414670452/4751584435713464237", "lazada": "https://go.isclix.com/deep_link/6837508078414670452/5127144557053758578", "tiktok": "https://go.isclix.com/deep_link/6837508078414670452/6648523843406889655"};
 const UTM_BASE = 'utm_source=' + encodeURIComponent(location.hostname) + '&utm_medium=affiliate';
 function makeIsclixUrl(base, originUrl, sku, merchant){
   if(!base) return originUrl;

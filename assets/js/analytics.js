@@ -1,6 +1,6 @@
 
 ;(function(){
-  var MEASUREMENT_ID = "G-2FQ0YDHWDE";
+  var MEASUREMENT_ID = "G-550F47VKPR";
   if(!MEASUREMENT_ID) return;
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}

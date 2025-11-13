@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nthuong09.github.io/sitemap.xml
+Sitemap: https://bongstudio68.github.io/sitemap.xml
