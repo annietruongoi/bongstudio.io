@@ -1,370 +1,855 @@
+<!-- REPLACE WHOLE FILE: /tools/bongstudio-tool.html (hoặc đường dẫn đang dùng) -->
 <!doctype html>
 <html lang="vi">
 <head>
-  <!-- NEW FILE: /tools/bongstudio-tool.html — Bongstudio • MXD210 -->
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-  <title>Bongstudio Tool v1 — Product JSON Builder</title>
-
-  <!-- Tool nội bộ: không index -->
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+  <title>Bongstudio Product Builder v1.1 — JSON + HTML + Ảnh share</title>
   <meta name="robots" content="noindex,follow"/>
-  <link rel="canonical" href="https://bongstudio68.github.io/tools/bongstudio-tool.html"/>
-
-  <!-- Dùng chung analytics + CSS để giữ mạch -->
-  <script defer src="/assets/js/analytics.js"></script>
-  <link rel="stylesheet" href="/assets/site.css"/>
-
   <style>
-    .tool-wrap{
-      max-width:960px;
-      margin:0 auto;
-      padding:16px 12px 40px;
+    :root{
+      --bg:#050814;
+      --fg:#f5f7ff;
+      --muted:#9aa4c6;
+      --card:#0d1224;
+      --accent:#7b8cff;
+      --accent-soft:rgba(123,140,255,.12);
+      --border:#23294a;
+      --danger:#f97373;
+      --ok:#34d399;
     }
-    .tool-header{
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:radial-gradient(circle at top,#161b3a 0,#050814 55%,#020308 100%);
+      color:var(--fg);
+      -webkit-font-smoothing:antialiased;
+    }
+    .wrap{
+      max-width:980px;
+      margin:0 auto;
+      padding:16px;
+    }
+    h1{
+      font-size:1.5rem;
+      margin:0 0 4px;
+      letter-spacing:.03em;
+    }
+    .sub{
+      font-size:.85rem;
+      color:var(--muted);
       margin-bottom:16px;
     }
-    .tool-header h1{
-      font-size:20px;
-      margin-bottom:4px;
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:14px 14px 10px;
+      margin-bottom:12px;
+      box-shadow:0 18px 45px rgba(0,0,0,.4);
     }
-    .tool-header p{
-      font-size:13px;
-      opacity:.8;
-      line-height:1.5;
-    }
-    .tool-grid{
-      display:grid;
-      grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
-      gap:16px;
-      margin-top:12px;
-    }
-    @media (max-width:768px){
-      .tool-grid{grid-template-columns:minmax(0,1fr);}
-    }
-    .tool-card{
-      border-radius:12px;
-      border:1px solid rgba(148,163,184,0.4);
-      padding:12px;
-      background:rgba(15,23,42,0.8);
-    }
-    .tool-card h2{
-      font-size:14px;
-      margin-bottom:6px;
-    }
-    .tool-card small{
-      font-size:11px;
-      opacity:.8;
-    }
-    .field{
-      margin-top:8px;
-    }
-    .field label{
-      display:block;
-      font-size:12px;
-      margin-bottom:2px;
-    }
-    .field input,
-    .field select,
-    .field textarea{
-      width:100%;
-      font:inherit;
-      padding:6px 8px;
-      border-radius:8px;
-      border:1px solid rgba(148,163,184,0.5);
-      background-color:rgba(15,23,42,0.9);
-      color:inherit;
-      resize:vertical;
-    }
-    .field textarea{
-      min-height:60px;
-    }
-    .hint{
-      font-size:11px;
-      opacity:.7;
-      margin-top:2px;
-    }
-    .btn-row{
-      margin-top:10px;
+    .card-header{
       display:flex;
+      justify-content:space-between;
+      align-items:center;
       gap:8px;
-      flex-wrap:wrap;
+      margin-bottom:8px;
     }
-    .btn{
-      border:none;
-      border-radius:999px;
-      padding:6px 12px;
-      font-size:13px;
-      cursor:pointer;
-      background:#f97316;
-      color:#0b0f19;
+    .card-title{
+      font-size:.95rem;
       font-weight:600;
-    }
-    .btn.secondary{
-      background:transparent;
-      color:inherit;
-      border:1px solid rgba(148,163,184,0.6);
-    }
-    .output-area{
-      width:100%;
-      min-height:140px;
-      font:12px/1.4 ui-monospace,Menlo,Consolas,monospace;
-      padding:8px;
-      border-radius:8px;
-      border:1px solid rgba(148,163,184,0.5);
-      background:rgba(15,23,42,0.9);
-      color:inherit;
-      resize:vertical;
-      white-space:pre;
-    }
-    .output-label{
-      font-size:12px;
-      margin:6px 0 2px;
-    }
-    .pill-row{
       display:flex;
-      flex-wrap:wrap;
-      gap:6px;
-      margin-top:6px;
+      align-items:center;
+      gap:8px;
     }
     .pill{
-      font-size:11px;
-      padding:3px 8px;
+      font-size:.7rem;
+      padding:2px 8px;
       border-radius:999px;
-      border:1px solid rgba(148,163,184,0.5);
+      background:var(--accent-soft);
+      color:var(--accent);
+      border:1px solid rgba(123,140,255,.35);
+      text-transform:uppercase;
+      letter-spacing:.06em;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+    }
+    @media(max-width:768px){
+      .grid{grid-template-columns:1fr}
+    }
+    label{
+      font-size:.8rem;
+      color:var(--muted);
+      margin-bottom:2px;
+      display:block;
+    }
+    input,select,textarea{
+      width:100%;
+      border-radius:9px;
+      border:1px solid var(--border);
+      background:#070b18;
+      color:var(--fg);
+      padding:7px 9px;
+      font:inherit;
+      font-size:.85rem;
+      outline:none;
+      transition:border .13s,box-shadow .13s,background .13s;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 1px rgba(123,140,255,.45);
+      background:#080e20;
+    }
+    textarea{
+      min-height:120px;
+      resize:vertical;
+      font-family:ui-monospace,Menlo,Consolas,monospace;
+      line-height:1.5;
+      white-space:pre;
+    }
+    .row{
+      margin-bottom:8px;
+    }
+    .hint{
+      font-size:.75rem;
+      color:var(--muted);
+      margin-top:1px;
+    }
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:6px;
+    }
+    button{
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:linear-gradient(135deg,#3d4fff,#7b8cff);
+      color:#f9fbff;
+      padding:6px 14px;
+      font-size:.8rem;
+      font-weight:600;
+      letter-spacing:.04em;
+      text-transform:uppercase;
       cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      box-shadow:0 12px 25px rgba(17,24,39,.45);
+      transition:transform .12s,box-shadow .12s,opacity .12s;
+    }
+    button.secondary{
+      background:transparent;
+      color:var(--muted);
+      box-shadow:none;
+      border-style:dashed;
+    }
+    button:hover{
+      transform:translateY(-1px);
+      box-shadow:0 16px 40px rgba(15,23,42,.65);
+    }
+    button:active{
+      transform:translateY(0);
+      box-shadow:0 8px 18px rgba(15,23,42,.5);
+    }
+    .badge-ok{color:var(--ok);font-size:.75rem;}
+    .badge-err{color:var(--danger);font-size:.75rem;}
+    .preview-img{
+      width:100%;
+      max-height:220px;
+      object-fit:cover;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#020309;
+    }
+    .split-2{
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
+      gap:8px;
+    }
+    @media(max-width:900px){
+      .split-2{grid-template-columns:1fr}
+    }
+    .mono-small{
+      font-family:ui-monospace,Menlo,Consolas,monospace;
+      font-size:.75rem;
+      color:var(--muted);
+    }
+    .footer{
+      margin-top:12px;
+      font-size:.75rem;
+      color:var(--muted);
+      text-align:center;
+    }
+    .tagline{
+      font-size:.8rem;
+      color:var(--muted);
+    }
+
+    /* Khối ảnh share */
+    .share-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(0,0.9fr);
+      gap:8px;
+    }
+    @media(max-width:900px){
+      .share-layout{grid-template-columns:1fr}
+    }
+    .canvas-box{
+      border-radius:14px;
+      border:1px dashed var(--border);
+      background:#020414;
+      padding:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:220px;
+    }
+    canvas{
+      max-width:100%;
+      height:auto;
+      display:block;
+      border-radius:12px;
     }
   </style>
 </head>
 <body>
-<header class="top">
-  <div class="inner container">
-    <div class="brand">Bongstudio • Tool</div>
-    <nav>
-      <a href="/">Trang chủ</a>
-      <a href="/store.html">Cửa hàng</a>
-    </nav>
-  </div>
-</header>
-
-<div class="tool-wrap">
-  <div class="tool-header">
-    <h1>Bongstudio Tool v1 — Product JSON Builder</h1>
-    <p>
-      Nhập thông tin sản phẩm (tên, link gốc, giá, danh mục, merchant) → tool sẽ sinh ra
-      <strong>JSON</strong> và <strong>snippet HTML</strong> theo chuẩn MXD/Bongstudio.
-      JSON dùng cho data, HTML dùng cho lưới sản phẩm hoặc g.html sau này.
-    </p>
+<div class="wrap">
+  <h1>🔧 Bongstudio Product Builder v1.1</h1>
+  <div class="sub">
+    Nhập thông tin sản phẩm ➝ tool tự sinh <b>slug chuẩn</b>, block <b>JSON</b>, đoạn <b>HTML card</b> và <b>ảnh share PNG</b> để đăng Facebook/Story.
   </div>
 
-  <div class="tool-grid">
-    <!-- Form bên trái -->
-    <div class="tool-card">
-      <h2>1. Thông tin sản phẩm</h2>
-      <small>Điền đơn giản, những gì chưa có thì có thể bỏ trống.</small>
-
-      <div class="field">
-        <label for="title">Tên sản phẩm</label>
-        <input id="title" type="text" placeholder="Ví dụ: Áo cardigan len dáng rộng cho nữ"/>
-        <div class="hint">Dùng để sinh SKU + title hiển thị.</div>
+  <!-- KHỐI 1: INPUT THÔNG TIN -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        1. Thông tin sản phẩm
+        <span class="pill">Input</span>
       </div>
+      <div class="tagline">Giữ mạch chuẩn chung cho toàn bộ Bongstudio.</div>
+    </div>
 
-      <div class="field">
-        <label for="origin_url">Link gốc trên sàn</label>
-        <input id="origin_url" type="url" placeholder="https://shopee.vn/... hoặc https://www.lazada.vn/..."/>
-        <div class="hint">Link gốc thật từ Shopee / Lazada / TikTok / Tiki.</div>
-      </div>
-
-      <div class="field">
-        <label for="merchant">Sàn (merchant)</label>
+    <div class="grid">
+      <div class="row">
+        <label for="merchant">Sàn / Nguồn</label>
         <select id="merchant">
-          <option value="">-- Chọn sàn --</option>
           <option value="shopee">Shopee</option>
           <option value="lazada">Lazada</option>
           <option value="tiktok">TikTok</option>
           <option value="tiki">Tiki</option>
+          <option value="other">Khác / Tự nhập</option>
         </select>
-        <div class="hint">Quan trọng: mxd-affiliate dùng field này để sinh isclix đúng base.</div>
+        <div class="hint">Dùng để gợi ý tag & mô tả.</div>
       </div>
 
-      <div class="field">
-        <label for="category">Danh mục chính (category slug)</label>
+      <div class="row">
+        <label for="originUrl">Link gốc sản phẩm</label>
+        <input id="originUrl" placeholder="Dán link sản phẩm trên sàn…"/>
+        <div class="hint">Có thể là link dài, tool không sửa link — chỉ giữ lại.</div>
+      </div>
+
+      <div class="row">
+        <label for="title">Tên sản phẩm (Title)</label>
+        <input id="title" placeholder="Ví dụ: Áo khoác cardigan len dáng rộng…"/>
+        <div class="hint">Càng rõ ràng càng dễ SEO & CTR.</div>
+      </div>
+
+      <div class="row">
+        <label for="priceNow">Giá bán hiện tại (VNĐ)</label>
+        <input id="priceNow" placeholder="Ví dụ: 159000 hoặc 159.000"/>
+        <div class="hint">Tool tự bỏ dấu chấm, chuyển sang số.</div>
+      </div>
+
+      <div class="row">
+        <label for="priceOld">Giá gốc / Giá so sánh (tuỳ chọn)</label>
+        <input id="priceOld" placeholder="Ví dụ: 259000"/>
+        <div class="hint">Để show “giảm bao nhiêu %”.</div>
+      </div>
+
+      <div class="row">
+        <label for="category">Danh mục chính (Bongstudio)</label>
         <select id="category">
-          <option value="">-- Chọn danh mục --</option>
-          <option value="gia-dung-decor-nha-cua">Gia dụng, decor nhà cửa</option>
+          <option value="gia-dung-decor">Gia dụng, decor nhà cửa</option>
           <option value="thoi-trang-nu">Thời trang nữ</option>
           <option value="thoi-trang-nam">Thời trang nam</option>
           <option value="quan-ao-em-be">Quần áo em bé</option>
-          <option value="suc-khoe-thuc-pham-chuc-nang">Sức khỏe, thực phẩm chức năng</option>
+          <option value="suc-khoe-tpcn">Sức khoẻ, thực phẩm chức năng</option>
           <option value="sach">Sách</option>
           <option value="do-an">Đồ ăn</option>
         </select>
-        <div class="hint">Khớp với các trang cat-*.html mà ta vừa tạo.</div>
+        <div class="hint">Slug danh mục đã được chuẩn hoá sẵn.</div>
       </div>
 
-      <div class="field">
-        <label for="price">Giá hiện tại (VND)</label>
-        <input id="price" type="number" inputmode="numeric" placeholder="Ví dụ: 199000"/>
+      <div class="row">
+        <label for="sku">SKU / Mã chuẩn Bongstudio</label>
+        <input id="sku" placeholder="Tự sinh từ tên sản phẩm hoặc tự nhập…"/>
+        <div class="actions">
+          <button type="button" id="btnSlug">Tạo slug từ tên</button>
+        </div>
+        <div class="hint mono-small" id="slugHint"></div>
       </div>
 
-      <div class="field">
-        <label for="price_old">Giá gạch (nếu có, VND)</label>
-        <input id="price_old" type="number" inputmode="numeric" placeholder="Ví dụ: 299000"/>
+      <div class="row">
+        <label for="thumbUrl">Link ảnh đại diện (thumb)</label>
+        <input id="thumbUrl" placeholder="Dán link ảnh sản phẩm (tạm thời)…"/>
+        <div class="hint">Sau này có worker upload ảnh lên repo thì chỉ việc thay lại link local.</div>
       </div>
 
-      <div class="field">
-        <label for="img_hint">Ảnh (gợi ý path)</label>
-        <input id="img_hint" type="text" disabled value="/assets/img/products/&lt;sku&gt;.webp"/>
-        <div class="hint">Tool sẽ gợi ý SKU và path ảnh dựa trên tên sản phẩm.</div>
-      </div>
-
-      <div class="field">
-        <label for="tags">Tags (phân tách bằng dấu phẩy)</label>
-        <input id="tags" type="text" placeholder="ví dụ: ao-khoac, cardigan, nu, thu-dong"/>
-        <div class="hint">Dùng cho filter chi tiết hơn nếu cần.</div>
-      </div>
-
-      <div class="pill-row">
-        <span class="pill" onclick="quickTag('nu')">+ nữ</span>
-        <span class="pill" onclick="quickTag('nam')">+ nam</span>
-        <span class="pill" onclick="quickTag('tre-em')">+ trẻ-em</span>
-        <span class="pill" onclick="quickTag('thu-dong')">+ thu-đông</span>
-        <span class="pill" onclick="quickTag('he')">+ hè</span>
-      </div>
-
-      <div class="field">
-        <label for="description">Mô tả ngắn</label>
-        <textarea id="description" placeholder="Cảm nhận, điểm mạnh của sản phẩm dưới góc nhìn người dùng Việt."></textarea>
-      </div>
-
-      <div class="btn-row">
-        <button type="button" class="btn" onclick="generateOutput()">Sinh JSON + HTML</button>
-        <button type="button" class="btn secondary" onclick="resetForm()">Xóa form</button>
+      <div class="row">
+        <label for="shortDesc">Mô tả ngắn (Short description)</label>
+        <textarea id="shortDesc" placeholder="Nếu để trống, tool sẽ gợi ý mô tả theo danh mục & sàn."></textarea>
       </div>
     </div>
 
-    <!-- Output bên phải -->
-    <div class="tool-card">
-      <h2>2. Kết quả</h2>
-      <small>Copy dán vào JSON / HTML theo đúng vị trí trong repo.</small>
-
-      <div class="output-label">JSON sản phẩm (đưa vào file data hoặc products.json)</div>
-      <textarea id="json_output" class="output-area" readonly placeholder="// JSON sẽ hiện ở đây sau khi bấm Sinh JSON + HTML"></textarea>
-
-      <div class="output-label" style="margin-top:8px;">Snippet HTML card (dùng cho lưới sản phẩm)</div>
-      <textarea id="html_output" class="output-area" readonly placeholder="<!-- HTML card sẽ hiện ở đây -->"></textarea>
+    <div class="actions">
+      <button type="button" id="btnGenerate">Tạo JSON + HTML</button>
+      <button type="button" class="secondary" id="btnClear">Xoá form</button>
     </div>
+  </div>
+
+  <!-- KHỐI 2: JSON -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        2. JSON sản phẩm
+        <span class="pill">Output · JSON</span>
+      </div>
+      <span id="statusJson" class="badge-err"></span>
+    </div>
+
+    <div class="split-2">
+      <div>
+        <textarea id="jsonOutput" readonly placeholder="{ ... }"></textarea>
+        <div class="actions">
+          <button type="button" id="btnCopyJson">Copy JSON</button>
+        </div>
+      </div>
+      <div>
+        <label for="previewImg">Preview ảnh (nếu có link):</label>
+        <img id="previewImg" class="preview-img" alt="Preview ảnh sản phẩm"/>
+        <div class="hint">Tool chỉ hiển thị để kiểm tra, không lưu ở đâu cả.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KHỐI 3: HTML CARD -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        3. Đoạn HTML card gợi ý
+        <span class="pill">Output · HTML</span>
+      </div>
+      <span class="mono-small">Dán vào các file danh mục / g.html</span>
+    </div>
+
+    <textarea id="htmlOutput" readonly placeholder="&lt;article class=&quot;product-card&quot; ..."></textarea>
+    <div class="actions">
+      <button type="button" id="btnCopyHtml">Copy HTML</button>
+    </div>
+    <div class="hint">
+      Cấu trúc card giữ mức “an toàn” — sau này nếu layout Bongstudio thay đổi,
+      chỉ cần chỉnh lại CSS/global class mà không phải sửa từng sản phẩm.
+    </div>
+  </div>
+
+  <!-- KHỐI 4: ẢNH SHARE PNG -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">
+        4. Ảnh share mạng xã hội (PNG)
+        <span class="pill">Output · Image</span>
+      </div>
+      <span id="shareStatus" class="badge-err"></span>
+    </div>
+
+    <div class="share-layout">
+      <div>
+        <div class="row">
+          <label for="shareTitle">Tiêu đề lớn trên ảnh</label>
+          <input id="shareTitle" placeholder="Nếu bỏ trống sẽ dùng tên sản phẩm"/>
+          <div class="hint">Tối đa 2–3 dòng, ngắn gọn, dễ đọc.</div>
+        </div>
+        <div class="row">
+          <label for="shareTagline">Dòng mô tả nhỏ phía dưới</label>
+          <input id="shareTagline" placeholder="Ví dụ: Check giá & ưu đãi mới nhất trên Shopee"/>
+        </div>
+        <div class="row">
+          <label for="shareBadge">Badge nổi bật (góc phải)</label>
+          <input id="shareBadge" placeholder="Ví dụ: Khoảng 159K / Deal hôm nay"/>
+        </div>
+        <div class="row">
+          <label for="shareSize">Tỉ lệ ảnh</label>
+          <select id="shareSize">
+            <option value="square">Vuông 1:1 (1080×1080) — post thường</option>
+            <option value="4x5">Dọc 4:5 (1080×1350) — feed tối ưu</option>
+            <option value="story">Story 9:16 (1080×1920)</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button type="button" id="btnRenderShare">Vẽ lại ảnh</button>
+          <button type="button" class="secondary" id="btnDownloadShare">Tải ảnh PNG</button>
+        </div>
+        <div class="hint">
+          Ảnh này chỉ dùng nền gradient + text (không lấy ảnh từ sàn) để tránh lỗi CORS,
+          đảm bảo tải PNG được ở mọi trình duyệt. Khi có worker upload ảnh vào repo ta sẽ nâng cấp sau.
+        </div>
+      </div>
+      <div>
+        <div class="canvas-box">
+          <canvas id="shareCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Bongstudio Tool v1.1 — chạy hoàn toàn trên trình duyệt, không gọi API.  
+    Bước sau: nối mạch với worker để publish JSON + upload ảnh thẳng lên repo.
   </div>
 </div>
 
 <script>
-  function slugify(text){
-    return (text || "")
-      .toString()
-      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-      .slice(0, 80);
+(function(){
+  const $ = id => document.getElementById(id);
+  let lastData = null;
+
+  function slugify(str){
+    if(!str) return '';
+    let s = str.normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    s = s.toLowerCase();
+    s = s.replace(/[^a-z0-9]+/g,'-');
+    s = s.replace(/^-+|-+$/g,'');
+    s = s.replace(/-+/g,'-');
+    return s;
   }
 
-  function quickTag(tag){
-    const input = document.getElementById('tags');
-    const current = input.value.trim();
-    if(!current){
-      input.value = tag;
-      return;
-    }
-    const parts = current.split(',').map(s => s.trim()).filter(Boolean);
-    if(!parts.includes(tag)){
-      parts.push(tag);
-      input.value = parts.join(', ');
+  function cleanPrice(val){
+    if(!val) return null;
+    const num = parseInt(String(val).replace(/[^\d]/g,''),10);
+    return Number.isFinite(num) ? num : null;
+  }
+
+  const DESC_TEMPLATES = {
+    "gia-dung-decor": "Sản phẩm gia dụng/ decor phù hợp nhiều không gian, ưu tiên độ bền và tính tiện dụng, giúp góc nhà của bạn gọn gàng và đẹp mắt hơn.",
+    "thoi-trang-nu": "Item dễ phối đồ, lên dáng tôn form, phù hợp mặc đi làm, đi chơi, chất liệu thoải mái và giữ form ổn sau nhiều lần giặt.",
+    "thoi-trang-nam": "Thiết kế đơn giản, dễ phối với quần jeans/ kaki, thích hợp đi làm, đi chơi, chất liệu thoáng và ít nhăn.",
+    "quan-ao-em-be": "Chất liệu mềm, ưu tiên an toàn cho da bé, đường may hạn chế cọ xát, phù hợp cho sinh hoạt hằng ngày.",
+    "suc-khoe-tpcn": "Sản phẩm thuộc nhóm hỗ trợ sức khoẻ, nên đọc kỹ hướng dẫn sử dụng và tham khảo ý kiến chuyên gia khi cần.",
+    "sach": "Đầu sách dễ đọc, phù hợp để thư giãn và bổ sung kiến thức nhẹ nhàng trong ngày.",
+    "do-an": "Sản phẩm ăn uống tiện lợi, phù hợp làm snack/ bữa nhẹ, chú ý xem kỹ hạn sử dụng và hướng dẫn bảo quản trên bao bì."
+  };
+
+  function merchantLabel(code){
+    switch(code){
+      case 'shopee': return 'Shopee';
+      case 'lazada': return 'Lazada';
+      case 'tiktok': return 'TikTok Shop';
+      case 'tiki':   return 'Tiki';
+      default:       return 'Nguồn khác';
     }
   }
 
-  function generateOutput(){
-    const title = document.getElementById('title').value.trim();
-    const origin_url = document.getElementById('origin_url').value.trim();
-    const merchant = document.getElementById('merchant').value.trim();
-    const category = document.getElementById('category').value.trim();
-    const price = document.getElementById('price').value.trim();
-    const price_old = document.getElementById('price_old').value.trim();
-    const tagsRaw = document.getElementById('tags').value.trim();
-    const description = document.getElementById('description').value.trim();
+  function buildShortDesc(cat, merchant, current){
+    if(current && current.trim().length >= 16) return current.trim();
+    const base = DESC_TEMPLATES[cat] || "Sản phẩm được Bongstudio chọn lọc, ưu tiên trải nghiệm dùng thực tế và mức giá hợp lý.";
+    const m = merchantLabel(merchant);
+    return base + " Đang được phân phối trên " + m + ", theo dõi giá/ ưu đãi trực tiếp trên trang sản phẩm.";
+  }
 
-    if(!title || !origin_url || !merchant || !category){
-      alert('Cần ít nhất: Tên sản phẩm, Link gốc, Sàn (merchant), Danh mục.');
-      return;
+  function buildJson(){
+    const merchant = $('merchant').value;
+    const originUrl = $('originUrl').value.trim();
+    const title = $('title').value.trim();
+    const priceNow = cleanPrice($('priceNow').value);
+    const priceOld = cleanPrice($('priceOld').value);
+    const category = $('category').value;
+    let sku = $('sku').value.trim();
+    const thumbUrl = $('thumbUrl').value.trim();
+    const shortDescRaw = $('shortDesc').value;
+
+    if(!title || !originUrl){
+      $('statusJson').textContent = "Cần tối thiểu: Tên sản phẩm + Link gốc.";
+      $('statusJson').className = "badge-err";
+      return null;
     }
 
-    const skuBase = slugify(title);
-    const sku = skuBase || ('sp-' + Date.now());
-    document.getElementById('img_hint').value = '/assets/img/products/' + sku + '.webp';
+    if(!sku){
+      sku = slugify(title);
+      $('sku').value = sku;
+      $('slugHint').textContent = "Đã tự sinh SKU từ tên: " + sku;
+    }
 
-    const tags = tagsRaw
-      ? tagsRaw.split(',').map(s => slugify(s.trim())).filter(Boolean)
-      : [];
+    const shortDesc = buildShortDesc(category, merchant, shortDescRaw);
+    $('shortDesc').value = shortDesc;
 
-    const productJson = {
+    const today = new Date();
+    const created = today.toISOString().slice(0,10);
+
+    const tags = [
+      "bongstudio",
+      merchant,
+      category,
+      sku
+    ].filter(Boolean);
+
+    const obj = {
       sku,
       title,
-      origin_url,
+      origin_url: originUrl,
       merchant,
-      img: '/assets/img/products/' + sku + '.webp',
-      price: price ? Number(price) : null,
-      price_old: price_old ? Number(price_old) : null,
-      categories: [category],
+      category,
+      price: priceNow,
+      price_old: priceOld,
+      thumb: thumbUrl || null,
+      short_desc: shortDesc,
       tags,
-      description
+      note: "Bongstudio Tool v1.1",
+      created_at: created
     };
 
-    const jsonOutput = JSON.stringify(productJson, null, 2);
+    $('statusJson').textContent = "JSON đã sinh xong (" + created + ").";
+    $('statusJson').className = "badge-ok";
 
-    const htmlOutput =
-`<article class="product-card" data-sku="${sku}" data-category="${category}">
-  <a href="/g.html?sku=${sku}">
-    <div class="thumb">
-      <img src="/assets/img/products/${sku}.webp" alt="${escapeHtml(title)}" loading="lazy" width="400" height="400"/>
+    return obj;
+  }
+
+  function buildHtmlCard(data){
+    if(!data) return "";
+    const priceNow = data.price ? data.price.toLocaleString('vi-VN') + "₫" : "Liên hệ";
+    const priceOld = data.price_old ? data.price_old.toLocaleString('vi-VN') + "₫" : "";
+    const merchantText = merchantLabel(data.merchant);
+
+    return (
+`<article class="product-card" data-sku="${data.sku}" data-merchant="${data.merchant}" data-category="${data.category}">
+  <a class="product-link" href="${data.origin_url}" target="_blank" rel="nofollow noopener">
+    <div class="product-thumb">
+      <img src="${data.thumb || ''}" alt="${data.title.replace(/"/g,'&quot;')}" loading="lazy"/>
+      <span class="product-merchant">${merchantText}</span>
     </div>
-    <h3>${escapeHtml(title)}</h3>
-    <div class="price-row">
-      ${price ? `<span class="price">${formatPrice(price)}₫</span>` : ''}
-      ${price_old ? `<span class="price-old">${formatPrice(price_old)}₫</span>` : ''}
+    <div class="product-body">
+      <h3 class="product-title">${data.title}</h3>
+      <p class="product-desc">${data.short_desc}</p>
+      <div class="product-prices">
+        <span class="price-now">${priceNow}</span>${
+          priceOld ? `\n        <span class="price-old">${priceOld}</span>` : ""
+        }
+      </div>
+      <div class="product-cta">
+        <span class="btn-buy">Xem ưu đãi trên ${merchantText}</span>
+      </div>
     </div>
   </a>
-</article>`;
-
-    document.getElementById('json_output').value = jsonOutput;
-    document.getElementById('html_output').value = htmlOutput;
+</article>`
+    );
   }
 
-  function resetForm(){
-    document.getElementById('title').value = '';
-    document.getElementById('origin_url').value = '';
-    document.getElementById('merchant').value = '';
-    document.getElementById('category').value = '';
-    document.getElementById('price').value = '';
-    document.getElementById('price_old').value = '';
-    document.getElementById('tags').value = '';
-    document.getElementById('description').value = '';
-    document.getElementById('img_hint').value = '/assets/img/products/<sku>.webp';
-    document.getElementById('json_output').value = '';
-    document.getElementById('html_output').value = '';
+  function updateShareFieldsFromData(data){
+    if(!$('shareTitle')) return;
+    if(!$('shareTitle').value){
+      $('shareTitle').value = data.title;
+    }
+    if(!$('shareTagline').value){
+      $('shareTagline').value = "Deal từ " + merchantLabel(data.merchant) + " • " + (data.category || "Bongstudio");
+    }
+    if(!$('shareBadge').value){
+      if(data.price){
+        const k = Math.round(data.price / 1000);
+        $('shareBadge').value = "Khoảng " + k + "K";
+      }else{
+        $('shareBadge').value = "Ưu đãi theo thời điểm";
+      }
+    }
   }
 
-  function escapeHtml(str){
-    return (str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+  function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines){
+    if(!text) return y;
+    const words = text.split(/\s+/);
+    let line = "";
+    let lineCount = 0;
+    for(let n=0;n<words.length;n++){
+      const testLine = line ? line + " " + words[n] : words[n];
+      const metrics = ctx.measureText(testLine);
+      if(metrics.width > maxWidth && n>0){
+        ctx.fillText(line, x, y);
+        line = words[n];
+        y += lineHeight;
+        lineCount++;
+        if(maxLines && lineCount >= maxLines - 1){
+          const remaining = words.slice(n).join(" ");
+          let ell = remaining;
+          while(ctx.measureText(ell + "…").width > maxWidth && ell.length > 3){
+            ell = ell.slice(0,-4);
+          }
+          ctx.fillText(ell + "…", x, y);
+          return y;
+        }
+      }else{
+        line = testLine;
+      }
+    }
+    if(line){
+      ctx.fillText(line,x,y);
+    }
+    return y;
   }
 
-  function formatPrice(v){
-    const n = Number(v || 0);
-    if(!n) return '0';
-    return n.toLocaleString('vi-VN');
+  function roundedRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r,y);
+    ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r);
+    ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h);
+    ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r);
+    ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
   }
+
+  function renderShareImage(){
+    const canvas = $('shareCanvas');
+    const statusEl = $('shareStatus');
+    const shareTitle = $('shareTitle').value.trim();
+    const shareTagline = $('shareTagline').value.trim();
+    const shareBadge = $('shareBadge').value.trim();
+    const size = $('shareSize').value;
+    const data = lastData || buildJson();
+
+    if(!data){
+      statusEl.textContent = "Hãy tạo JSON (bấm Tạo JSON + HTML) trước khi vẽ ảnh.";
+      statusEl.className = "badge-err";
+      return;
+    }
+
+    let w = 1080, h = 1080;
+    if(size === '4x5'){ h = 1350; }
+    else if(size === 'story'){ h = 1920; }
+
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d');
+
+    // Nền gradient
+    const grad = ctx.createLinearGradient(0,0,w,h);
+    grad.addColorStop(0,'#020617');
+    grad.addColorStop(0.45,'#111827');
+    grad.addColorStop(1,'#1d233b');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0,0,w,h);
+
+    // Vùng glow tròn
+    ctx.fillStyle = 'rgba(96,165,250,0.35)';
+    const centerX = w*0.72;
+    const centerY = h*0.22;
+    const radius = Math.min(w,h)*0.22;
+    ctx.beginPath();
+    ctx.arc(centerX,centerY,radius,0,Math.PI*2);
+    ctx.fill();
+
+    // Card chính
+    const margin = w*0.08;
+    const top = h*0.22;
+    const cardW = w - margin*2;
+    const cardH = h*0.46;
+    roundedRect(ctx, margin, top, cardW, cardH, w*0.04);
+    ctx.fillStyle = 'rgba(15,23,42,0.92)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(129,140,248,0.65)';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    const innerX = margin + w*0.05;
+    let textY = top + w*0.09;
+
+    // Tag sàn + danh mục
+    ctx.font = '500 ' + Math.round(w*0.022) + 'px system-ui';
+    ctx.fillStyle = '#e5e7eb';
+    const tag = merchantLabel(data.merchant) + ' • ' + (data.category || '');
+    ctx.fillText(tag, innerX, textY);
+    textY += w*0.04;
+
+    // Tiêu đề lớn
+    ctx.font = '700 ' + Math.round(w*0.045) + 'px system-ui';
+    ctx.fillStyle = '#f9fafb';
+    const titleText = shareTitle || data.title;
+    textY = wrapText(ctx, titleText, innerX, textY, cardW - w*0.12, w*0.055, 3);
+    textY += w*0.03;
+
+    // Giá
+    ctx.font = '700 ' + Math.round(w*0.04) + 'px system-ui';
+    ctx.fillStyle = '#bfdbfe';
+    const priceNow = data.price ? data.price.toLocaleString('vi-VN') + '₫' : 'Giá cập nhật trên sàn';
+    ctx.fillText(priceNow, innerX, textY);
+
+    if(data.price_old){
+      ctx.font = '500 ' + Math.round(w*0.025) + 'px system-ui';
+      ctx.fillStyle = '#9ca3af';
+      const old = data.price_old.toLocaleString('vi-VN') + '₫';
+      const widthNow = ctx.measureText(priceNow).width;
+      ctx.fillText(old, innerX + widthNow + 16, textY);
+      const oldWidth = ctx.measureText(old).width;
+      ctx.strokeStyle = '#9ca3af';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(innerX + widthNow + 16, textY - w*0.012);
+      ctx.lineTo(innerX + widthNow + 16 + oldWidth, textY - w*0.012);
+      ctx.stroke();
+    }
+
+    // Badge góc phải
+    const badgeText = shareBadge || 'Sản phẩm chọn lọc';
+    ctx.font = '600 ' + Math.round(w*0.026) + 'px system-ui';
+    const badgeWidth = ctx.measureText(badgeText).width + w*0.06;
+    const badgeHeight = w*0.06;
+    const badgeX = margin + cardW - badgeWidth - w*0.04;
+    const badgeY = top + cardH - badgeHeight - w*0.04;
+    roundedRect(ctx, badgeX, badgeY, badgeWidth, badgeHeight, w*0.03);
+    const gradBadge = ctx.createLinearGradient(badgeX, badgeY, badgeX+badgeWidth, badgeY+badgeHeight);
+    gradBadge.addColorStop(0,'#4f46e5');
+    gradBadge.addColorStop(1,'#22d3ee');
+    ctx.fillStyle = gradBadge;
+    ctx.fill();
+    ctx.fillStyle = '#f9fafb';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(badgeText, badgeX + w*0.03, badgeY + badgeHeight/2);
+
+    // Dải brand phía dưới
+    const stripH = h*0.09;
+    const stripY = h - stripH;
+    ctx.fillStyle = 'rgba(15,23,42,0.92)';
+    ctx.fillRect(0, stripY, w, stripH);
+
+    ctx.font = '600 ' + Math.round(w*0.03) + 'px system-ui';
+    ctx.fillStyle = '#e5e7eb';
+    ctx.textBaseline = 'alphabetic';
+    const brandText = 'Bongstudio • Sản phẩm chọn lọc';
+    ctx.fillText(brandText, margin, stripY + stripH*0.55);
+
+    ctx.font = '500 ' + Math.round(w*0.022) + 'px system-ui';
+    ctx.fillStyle = '#9ca3af';
+    const tagline = shareTagline || ('Check giá & ưu đãi mới nhất trực tiếp trên ' + merchantLabel(data.merchant));
+    wrapText(ctx, tagline, margin, stripY + stripH*0.8, w - margin*2, w*0.03, 2);
+
+    // SKU nhỏ góc phải
+    ctx.font = '500 ' + Math.round(w*0.02) + 'px ui-monospace,monospace';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#6b7280';
+    ctx.fillText(data.sku || '', w - margin, stripY + stripH*0.35);
+    ctx.textAlign = 'left';
+
+    statusEl.textContent = "Đã vẽ preview ảnh xong. Giờ có thể tải PNG.";
+    statusEl.className = "badge-ok";
+  }
+
+  function downloadShareImage(){
+    const canvas = $('shareCanvas');
+    const statusEl = $('shareStatus');
+    if(!canvas.width || !canvas.height){
+      statusEl.textContent = "Chưa có ảnh để tải. Bấm Vẽ lại ảnh trước.";
+      statusEl.className = "badge-err";
+      return;
+    }
+    try{
+      const dataUrl = canvas.toDataURL('image/png');
+      const data = lastData || buildJson();
+      const namePart = (data && data.sku) ? data.sku : 'bongstudio';
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = namePart + '-share.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      statusEl.textContent = "Đã yêu cầu tải ảnh PNG (xem trong thư mục tải về).";
+      statusEl.className = "badge-ok";
+    }catch(e){
+      statusEl.textContent = "Trình duyệt chặn tải ảnh (toDataURL). Thử trên browser khác.";
+      statusEl.className = "badge-err";
+    }
+  }
+
+  $('btnSlug').addEventListener('click', function(){
+    const title = $('title').value;
+    const s = slugify(title);
+    $('sku').value = s;
+    $('slugHint').textContent = s ? ("Slug đề xuất: " + s) : "Nhập tên sản phẩm trước để sinh slug.";
+  });
+
+  $('btnGenerate').addEventListener('click', function(){
+    const data = buildJson();
+    if(!data) return;
+    lastData = data;
+    $('jsonOutput').value = JSON.stringify(data, null, 2);
+
+    if(data.thumb){
+      $('previewImg').src = data.thumb;
+    }else{
+      $('previewImg').src = "";
+    }
+
+    $('htmlOutput').value = buildHtmlCard(data);
+    updateShareFieldsFromData(data);
+  });
+
+  $('btnClear').addEventListener('click', function(){
+    ['originUrl','title','priceNow','priceOld','sku','thumbUrl','shortDesc',
+     'shareTitle','shareTagline','shareBadge'].forEach(id => {
+      if($(id)) $(id).value = "";
+    });
+    lastData = null;
+    $('jsonOutput').value = "";
+    $('htmlOutput').value = "";
+    $('previewImg').src = "";
+    $('statusJson').textContent = "";
+    $('slugHint').textContent = "";
+    $('shareStatus').textContent = "";
+    const canvas = $('shareCanvas');
+    canvas.width = 0;
+    canvas.height = 0;
+  });
+
+  function copyToClipboard(el, label){
+    const value = el.value;
+    if(!value){
+      alert("Chưa có " + label + " để copy.");
+      return;
+    }
+    navigator.clipboard.writeText(value).then(()=>{
+      alert("Đã copy " + label + " vào clipboard.");
+    }).catch(()=>{
+      alert("Trình duyệt không cho copy tự động, hãy chọn thủ công.");
+    });
+  }
+
+  $('btnCopyJson').addEventListener('click', function(){
+    copyToClipboard($('jsonOutput'), "JSON");
+  });
+  $('btnCopyHtml').addEventListener('click', function(){
+    copyToClipboard($('htmlOutput'), "HTML");
+  });
+
+  $('btnRenderShare').addEventListener('click', function(){
+    if(!lastData){
+      const data = buildJson();
+      if(!data) return;
+      lastData = data;
+      updateShareFieldsFromData(data);
+    }
+    renderShareImage();
+  });
+
+  $('btnDownloadShare').addEventListener('click', function(){
+    downloadShareImage();
+  });
+
+  // Khởi tạo preview rỗng
+  $('previewImg').src = "";
+})();
 </script>
 </body>
 </html>
